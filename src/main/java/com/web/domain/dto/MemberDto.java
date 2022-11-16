@@ -1,6 +1,7 @@
 package com.web.domain.dto;
 
 
+import com.web.domain.entity.MemberEntity;
 import lombok.*;
 
 @NoArgsConstructor //빈생성자
@@ -10,9 +11,22 @@ import lombok.*;
 @Builder //객체 생성 안정성 보장
 public class MemberDto {
 
-    private String name;
-    private String email;
-    private String organization;
+    private int mno;
+
+    private String memail;
+    private String mpassword;
+    private String mphone;
+    // * dto --> entity변환
+    public MemberEntity toEntity() {
+        return  MemberEntity.builder()
+                .mno(this.mno)
+                .memail(this.memail)
+                .mpassword(this.mpassword)
+                .mphone(this.mphone)
+                .build();
+
+    }
+
 
 
 }

@@ -1,11 +1,9 @@
-alert("ddd")
-
 
 
 function setboard(){
 
 let data = {
-    btitle :  document.querySelector(".btitle").value
+    btitle :  document.querySelector(".btitle").value ,
     bcontent :  document.querySelector(".bcontent").value
 
 
@@ -15,10 +13,11 @@ let data = {
 
     $.ajax({
     url : "/board/setboard",
-    type : "POST",
-    data : data,JSON.stringify(data),
-    contentType : "application/json"
-    success : re=>{alert(re)}
+    type : "post",
+    data : JSON.stringify(data),
+    contentType : "application/json",
+    success : function(re){alert(re)}
 
     })
 }
+

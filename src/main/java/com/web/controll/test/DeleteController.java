@@ -1,4 +1,4 @@
-package com.web.controll;
+package com.web.controll.test;
 
 
 import org.springframework.web.bind.annotation.*;

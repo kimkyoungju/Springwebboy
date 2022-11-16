@@ -1,6 +1,8 @@
 package com.web.controll;
 
 import com.web.domain.dto.BoardDto;
+import com.web.service.Boardservice;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.web.bind.annotation.*;
@@ -14,12 +16,12 @@ public class BoardController {
     //1. 게시물 목록 페이지 열기
     @GetMapping("/list")
     public Resource List() {
-        return new ClassPathResource("temlpates/board/list.html");
+        return new ClassPathResource("templates/board/list.html");
     }
     //2.게시물 쓰기 페이지 열기
     @GetMapping("/write")
     public Resource write() {
-        return new ClassPathResource("temlpates/board/write.html");
+        return new ClassPathResource("templates/board/write.html");
 
     }
     //-----------------------------------------
@@ -30,16 +32,22 @@ public class BoardController {
         //1.DTO 내용확인
         //2. -----> 서비스 [ 비지니스 로직] 로 이동
         //2. 게시물 목록 보기
+
+        boolean result = new Boardservice().setboard(boardDto);
     return true;
     }
+    @Autowired
+    @ResponseBody
     @GetMapping("/getboards")
     public ArrayList<BoardDto>getboards() {
         //1. -----> 서비스 [비지니스 로직] 로 이동
-        //2. 반환
-        return null;
+        ArrayList list = new Boardservice().getboards();
+//2. 반환
+        return list;
 
 
     }
+
 
    /* //3. 게시물 개별조회
     @GetMapping("/getboard")
