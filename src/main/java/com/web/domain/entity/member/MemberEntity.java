@@ -1,11 +1,14 @@
-package com.web.domain.entity;
+package com.web.domain.entity.member;
 
 
 import com.web.domain.dto.MemberDto;
+import com.web.domain.entity.BaseEntity;
+import com.web.domain.entity.board.BoardEntity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor //빈생성자
 @AllArgsConstructor // 풀생성자
@@ -15,7 +18,7 @@ import java.time.LocalDateTime;
 @Builder //객체 생성 안정성 보장
 @Entity //해당 연결된 DB의 테이블과 매핑[ 연경 ]
 @Table(name = "member") // 테이블 명  DB 테이블 이름
-public class MemberEntity {
+public class MemberEntity extends BaseEntity {
 
     //1. 필드
     @Id ///엔티티당 무조건 1개이상 [pk]
@@ -29,6 +32,9 @@ public class MemberEntity {
     @Column(nullable = false)//  notnull
     private String mphone ; //회원전화
 
+    @OneToMany(mappedBy = "memberEntity")// 1: n pk에 해당 어놑테이션
+    @Builder.Default // 빌더사용시 해당 필드의 초기값 설정
+    private List<BoardEntity>boardEntityList = new ArrayList<>();
 
     //2. 생성자 [롬복으로 사용]
     //3. 메소드 [롬복으로 사용]
@@ -40,5 +46,4 @@ public class MemberEntity {
                 .mphone(this.mphone)
                 .build();//끝
     }
-
 }

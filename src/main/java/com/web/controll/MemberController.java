@@ -14,46 +14,40 @@ import java.util.List;
 @RequestMapping("/member") // 공통 URL 매핑 주소
 public class MemberController {
 
-//1.해당 ㅋ틀래스의 메소드 사용을 위한 메모리 생성
+    //1.해당 ㅋ틀래스의 메소드 사용을 위한 메모리 생성
 //---------------전역객체-----------------//
     @Autowired // 제어 역변 스프링 컨테이너 빈 생성[ 외부에 메모리 위임 ]
     private MemberService memberService;
 
 
-
-
-
-
 //---------------html반환 매핑-----------------//
-
     @GetMapping("/signup")
-    public Resource getsignup(){
-        return  new ClassPathResource("templates/member/signup.html"); // 프로젝트내 resource -> templates-> member->signup.html
+    public Resource getsignup() {
+        return new ClassPathResource("templates/member/signup.html"); // 프로젝트내 resource -> templates-> member->signup.html
     }
 
     @GetMapping("/login")
-    public Resource getlogin(){
+    public Resource getlogin() {
 
-        return  new ClassPathResource("templates/member/login.html"); // �
+        return new ClassPathResource("templates/member/login.html"); // �
 
     }
+
     @GetMapping("/findpassword")
-    public Resource findpassword(){
-        return  new ClassPathResource("templates/member/findpassword.html"); // �
+    public Resource findpassword() {
+        return new ClassPathResource("templates/member/findpassword.html"); // �
 
     }
+
     @GetMapping("/delete")
-    public Resource deletemember(){
-        return  new ClassPathResource("templates/member/deletemember.html");
+    public Resource deletemember() {
+        return new ClassPathResource("templates/member/deletemember.html");
     }
 
-   @GetMapping("/update")
-   public Resource getupdate(){
-        return  new ClassPathResource("templates/member/update.html"); }
-
-
-
-
+    @GetMapping("/update")
+    public Resource getupdate() {
+        return new ClassPathResource("templates/member/update.html");
+    }
 
 
     //---------------서비스/기능 매핑-----------------//
@@ -68,56 +62,63 @@ public class MemberController {
         //2. 반환
         return result;
     }
-     @PostMapping("/getmember")
-            public int getmember(@RequestBody MemberDto memberDto){
+
+    @PostMapping("/getmember")
+    public int getmember(@RequestBody MemberDto memberDto) {
 
         int result = memberService.getmember(memberDto);
-            return result;
-        }
+        return result;
+    }
 
-     @GetMapping("/getpassword")
-    public String getpassword(@RequestParam("memail") String memail){
-         String result = memberService.getpassword(memail);
+    @GetMapping("/getpassword")
+    public String getpassword(@RequestParam("memail") String memail) {
+        String result = memberService.getpassword(memail);
         return result;
 
 
-     }
-     @DeleteMapping("/setdelete") // 회원탈퇴
-    public int setdelete(@RequestParam("mpassword") String mpassword){
+    }
+
+    @DeleteMapping("/setdelete") // 회원탈퇴
+    public int setdelete(@RequestParam("mpassword") String mpassword) {
         //1. 서비스처리
-         int result = memberService.setdelete(mpassword);
+        int result = memberService.setdelete(mpassword);
 
-         // 2. 서비스 결과 반환
+        // 2. 서비스 결과 반환
 
         return result;
 
-     }
+    }
 
 
-     @PutMapping("/setupdate") // 회원수정
-    public int setupdate(@RequestParam("mpassword") String mpassword){
+    @PutMapping("/setupdate") // 회원수정
+    public int setupdate(@RequestParam("mpassword") String mpassword) {
         int result = memberService.setupdate(mpassword);
         return result;
-     }
+    }
+
     @GetMapping("/getloginMno") //로그인 정보 확인
-    public int getloginMno(){
+    public int getloginMno() {
         int result = memberService.getloginMno();
         return result;
     }
 
     @GetMapping("/logout") // 로그아웃
-    public int logout(){
+    public int logout() {
         int result = memberService.logout();
         return result;
     }
 
     @GetMapping("/list") // 회원목록 �
     @ResponseBody
-    public List<MemberDto> list(){
+    public List<MemberDto> list() {
         List<MemberDto> list = memberService.list();
         System.out.println("확인" + list);
         return list;
     }
 
-
+    @GetMapping("/getauth") //
+    public String getauth(@RequestParam("toemail") String toemail) {
+        System.out.println("인증요청");
+        return memberService.getauth("rlarudwn900@naver.com");
+    }
 }

@@ -1,7 +1,7 @@
 package com.web.domain.dto;
 
 
-import com.web.domain.entity.MemberEntity;
+import com.web.domain.entity.member.MemberEntity;
 import lombok.*;
 
 @NoArgsConstructor //빈생성자

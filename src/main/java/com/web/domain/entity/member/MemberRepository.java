@@ -1,5 +1,6 @@
-package com.web.domain.entity;
+package com.web.domain.entity.member;
 
+import com.web.domain.entity.member.MemberEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
