@@ -10,9 +10,9 @@ public class BoardDto {
     private String btitle;      // 게시물제목
     private String bcontent;    // 게시물 내용
     private int bview;          // 조회수
+    private int bcno;
     private String bfile;       // 첨부파일
     private int mno;            // 작성자[회원번호-fk]
-    private int cno;            // 카테고리[ 카테고리-fk ]
     private String memail;     // 회원 아이디
     //1. 형변환
     public BoardEntity toEntity(){

@@ -11,7 +11,9 @@ import javax.persistence.*;
 
 @Entity // 엔티티 정의
 @Table(name = "board") // 테이블명 정의
-@AllArgsConstructor@NoArgsConstructor@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
 @Setter
 @Builder
 @ToString // 롬복
@@ -55,7 +57,6 @@ public class BoardEntity extends BaseEntity {
                 .bcontent( this.bcontent )
                 .bview( this.bview )
                 .bfile( this.bfile )
-
                 .memail( this.memberEntity.getMemail().split("@")[0])
                 .build();
     }

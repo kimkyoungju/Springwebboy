@@ -1,12 +1,15 @@
 
 
-//1. 게시물 출력
+//전역변수
+let bcno = 0; // 선택된 카테고리
+//1. 게시물 출력 [1. 페이지 열렸을때 , 2. 카테고리버튼 클릭했을때
 boardlist()
 function boardlist(){
 
     $.ajax({
     url : "/board/boardlist",
     type : "get",
+    data : {"bcno" : bcno},
     success : function(list){
      let html = '<tr>  <th> 번호 </th> <th> 제목 </th> <th> 작성자 </th></tr>';
                 list.forEach( (b) => {
@@ -15,7 +18,7 @@ function boardlist(){
                 })
                 document.querySelector(".btable").innerHTML = html;
 
-    }
+        }
 
     })
 }
@@ -29,4 +32,29 @@ sessionStorage.setItem("bno",bno);
 
 //2. 페이지 전환
 location.href="/board/view";
+}
+//3. 모든 카테고리 출력
+bcategorylist()
+function bcategorylist(){
+    $.ajax({
+    url : "/board/bcategorylist",
+    type : "get",
+    success : function(re){
+    let html ='<button type="button" onclick="bcnochage(0)">전체보기</button>';
+    re.forEach(c=>{
+    html += '<button type ="button" class="cbtn" onclick="bcnochage('+c.bcno+')">'+c.bcname+'</button>'
+        console.log(c)
+                })
+                document.querySelector(".bcategorybox").innerHTML = html
+
+
+        }
+    })
+}
+
+//4. 카테고리를 선택했을때 선택된 카테고리 번호 변경
+
+function bcnochage(cno){
+    bcno = cno
+    boardlist();
 }

@@ -1,6 +1,7 @@
 package com.web.domain.entity.bcategory;
 
 
+import com.web.domain.dto.BcategoryDto;
 import com.web.domain.entity.BaseEntity;
 import com.web.domain.entity.board.BoardEntity;
 import lombok.*;
@@ -26,4 +27,12 @@ public class BcategoryEntity extends BaseEntity {
   @Builder.Default
   private List<BoardEntity> boardEntityList
           = new ArrayList<>();
+
+  public BcategoryDto getDto(){
+
+    return BcategoryDto.builder().bcno(this.bcno).bcname(this.bcname).build();
+
+
+
+  }
 }

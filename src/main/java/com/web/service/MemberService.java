@@ -30,6 +30,25 @@ public class MemberService {
     private JavaMailSender javaMailSender;
 
     //-------------서비스 메소드------------??
+
+   public MemberEntity getEntity() {
+       //1. 로그인 정보확인 [ 세션 =loginMno]
+       Object object = request.getSession().getAttribute("loginMno");
+       if (object == null) {
+           return null;
+       }
+       //2.로그인된 회원정보 호출
+       int mno = (Integer) object;
+       //3. 회원번호 ---> 회원정보 호출
+       Optional<MemberEntity> optional = memberRepository.findById(mno);
+       if (!optional.isPresent()) {
+           return null;
+       }
+       MemberEntity memberEntity = optional.get();
+       return memberEntity;
+
+   }
+
     @Transactional // 트랜잭션
     public int setmember(MemberDto memberDto) {
         //1. q비지니스 로직 [ 알고리즘 - 기능 ]

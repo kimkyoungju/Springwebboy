@@ -1,0 +1,16 @@
+package com.web.domain.test.연관관계2;
+
+import lombok.ToString;
+
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
+@ToString
+public class 제품 {
+@Id
+    String 제품명;
+    @OneToMany(mappedBy = "제품")
+            @ToString.Exclude
+    List<이미지>이미지List =  new ArrayList<>();
+}

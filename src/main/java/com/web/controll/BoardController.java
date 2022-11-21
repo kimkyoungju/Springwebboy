@@ -1,6 +1,8 @@
 package com.web.controll;
 
+import com.web.domain.dto.BcategoryDto;
 import com.web.domain.dto.BoardDto;
+import com.web.domain.dto.NomemberDto;
 import com.web.service.Boardservice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -36,19 +38,22 @@ public class BoardController {
     // 4. 게시물수정 페이지 열기
     @GetMapping("/update")// URL  : localhost:8080/board/update 요청시 해당 html 반환
     public Resource getupdate(){ return new ClassPathResource("templates/board/update.html"); }
-
+    // 비회원
+    @GetMapping("/nomember")
+    public  Resource nomember(){ return new ClassPathResource("templates/board/nomember.html");}
     // ----------- 3.요청과응답 처리 [model] --------------//
     // 1. HTTP 요청 메소드 매핑 : @PostMapping @GetMapping @DeleteMapping @PutMapping
     // 2. HTTP 데이터 요청 메소드 매핑 : @RequestBody @RequestParam @PathVariable
     // 1. 게시물 쓰기 [ 첨부파일 ]
     @PostMapping("/setboard")
     public boolean setboard( @RequestBody BoardDto boardDto ){
+        System.out.println(boardDto.toString());
         return boardService.setboard( boardDto);
     }
     // 2. 게시물 목록 조회 [ 페이징,검색 ]
     @GetMapping("/boardlist")
-    public List<BoardDto> boardlist(){
-        return boardService.boardlist();
+    public List<BoardDto> boardlist(@RequestParam("bcno") int bcno ){
+        return boardService.boardlist(bcno);
     }
     // 3. 게시물 개별 조회
     @GetMapping("/getboard")
@@ -65,5 +70,24 @@ public class BoardController {
     public boolean update( @RequestBody BoardDto boardDto){
         return boardService.upboard( boardDto );
     }
+
+    //6.카테고리 등록
+    @PostMapping("/setbcategory")
+
+    public boolean setbcategory( @RequestBody BcategoryDto bcategoryDto){
+        return boardService.setbcategory( bcategoryDto );
+    }
+    //7. 모든 카테고리 출력
+    @GetMapping("/bcategorylist")
+    public List<BcategoryDto>bcategoryList(){
+        return boardService.bcategoryList();
+    }
+
+    //비회원
+    @PostMapping("/nomemberwrite")
+    public boolean nomember(@RequestBody NomemberDto ndto){
+        return boardService.nomember(ndto);
+    }
+
 
 }
