@@ -23,6 +23,14 @@ public class BaseEntity {
     @Column (updatable = false)
     private LocalDateTime cdate;
 
+
+
+
+
+
+
+
+
     @LastModifiedDate // 데이터 수정 날짜를 자동 주입
     private LocalDateTime udate;
 

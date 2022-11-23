@@ -3,6 +3,7 @@ package com.web.service;
 import com.web.domain.dto.BcategoryDto;
 import com.web.domain.dto.BoardDto;
 import com.web.domain.dto.NomemberDto;
+import com.web.domain.dto.NwriteDto;
 import com.web.domain.entity.bcategory.BcategoryEntity;
 import com.web.domain.entity.bcategory.BcategoryRepository;
 import com.web.domain.entity.board.BoardEntity;
@@ -11,14 +12,21 @@ import com.web.domain.entity.member.MemberEntity;
 import com.web.domain.entity.member.MemberRepository;
 import com.web.domain.entity.nomember.NomemberEntity;
 import com.web.domain.entity.nomember.NomemberRepository;
+import com.web.domain.entity.nomember.NwriteEntity;
+import com.web.domain.entity.nomember.NwriteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
+import java.io.*;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class Boardservice {
@@ -28,14 +36,22 @@ public class Boardservice {
     @Autowired
     private MemberRepository memberRepository; // 회원리포지토리 객체 선언
     @Autowired
-    private HttpServletRequest request;
+    private HttpServletRequest request; // 요청객체 선언
+    @Autowired
+    private HttpServletResponse response; //응답객체 선언
     @Autowired
     private BcategoryRepository bcategoryRepository; //
 
     @Autowired
+    private NwriteRepository nwriteRepository; //
+    @Autowired
     private NomemberRepository repository;
     @Autowired
     private MemberService service;
+    //첨부파일 경로
+    String path = "C:\\Users\\504\\Desktop\\springweb\\Springwebboy\\src\\main\\resources\\static\\buploard\\";
+
+
 
     // @Transactional : 엔티티 DML 적용 할때 사용되는 어노테이션
     // 1. 메소드
@@ -46,13 +62,56 @@ public class Boardservice {
                 4. delete : boardRepository.delete( 삭제할엔티티 )
              */
     // ------------ 2. 서비스 ------------- //
-    // 1. 게시물 쓰기
+    //0. 첨부파일 다운로드
+    public  void filedownload(String filename) {
+        String realfilename = "";
+        String[] split = filename.split("_"); //1. _기준으로 자르기
+        for(int i = 1; i < split.length; i++){ //uuid 제외한 반복문 돌리기
+            realfilename +=split[i];            //3. 뒤자리 문자열
+            //마지막 인덱스가 아니면
+            if(split.length-1  != i){
+                realfilename += "_";    //문자열[1] _문자열[2]_ 문자열[3].확장자명
+            }
+        }
+        //1. 경로찾기
+        String filepath = path + filename;
+        //2. 헤더 구성
+        try {
+            response.setHeader(
+                    "Content-Disposition", // 다운로드 형식
+                    "attachment;filename=" + URLEncoder.encode(realfilename, "UTF-8"));
+            File file = new File(filepath);
+
+            //3.다운로드 스트림 []
+            //1. 다운로드 할 파일 바이트 읽어오기
+            BufferedInputStream fin = new BufferedInputStream(new FileInputStream(file));
+
+            //2. 읽어온 바이트 저장
+            byte[] bytes = new byte[(int)file.length()];
+            //3.  파일의 길이만큼 읽어와서 바이트를 배열에 저장
+            fin.read(bytes);
+            //4.출력스트림
+            BufferedOutputStream fout = new BufferedOutputStream(response.getOutputStream());
+            //5. 응답하기
+            fout.write(bytes);
+            //6. 버퍼 초기화 혹은 스트림 닫기
+            fout.flush(); fout.close(); fin.close();
+
+
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+    }
+     // 1. 게시물 쓰기
     @Transactional
     public boolean setboard(BoardDto boardDto) {
 
         MemberEntity memberEntity = service.getEntity();
         if(memberEntity == null) {return false;}
-
+        System.out.println(boardDto);
+        System.out.println(memberEntity);
 
         Optional<BcategoryEntity>optional = bcategoryRepository.findById(boardDto.getBcno());
         if(!optional.isPresent()){return false;}
@@ -61,6 +120,36 @@ public class Boardservice {
 
          BoardEntity boardEntity = boardRepository.save(boardDto.toEntity());  // 1. dto --> entity [ INSERT ] 저장된 entity 반환
         if (boardEntity.getBno() != 0) {       // 2. 생성된 entity의 게시물번호가 0 이 아니면  성공
+            //첨부파일 등록
+            //.getOriginalFilename() : 해당 인터페이스에 연결(주소)된 파일의 이름 호출
+            //.transferTo() : 파일이동 [사용자 pc --> 개발자 pc]
+                //.transferTo(파일객체)
+                //file : java 외 파일을 객체화 클래스
+                    //new file("경로") : 해당 경로의 파일을 저장
+            if(boardDto.getBfile() != null) {
+                String uuid = UUID.randomUUID().toString();
+                String filename = uuid + "_" + boardDto.getBfile().getOriginalFilename(); //업로드된 파일의 이름
+                //1. pk+ 파일명 [uuid(범용 고유 식별자 클래스)]
+                //2.uuid + 파일명
+
+                //3. 업로드 날짜/ 시간 + 파일명
+                //4 중복된 파일명 검색해서 파일명 뒤에 + 중복수 + 1
+
+
+                //첨부파일명 db에 등록
+                boardEntity.setBfile(filename);//난수 + 파일명 엔티티저장
+
+
+                //업로드 3. 저장할 경로
+                try {
+                    File uploadfile = new File(path + filename); //4. 경로 + 파일명[ 객체화]
+                    boardDto.getBfile().transferTo(uploadfile);  // 5. 해당 객체 경로로 업로드
+
+                } catch (Exception e) {
+                    System.out.println("첨부파일 업로드");
+                }
+            }
+
             //fk 대입
             boardEntity.setMemberEntity(memberEntity);
             //양방향 [pk필드에 fk연결]
@@ -126,7 +215,7 @@ public class Boardservice {
             // * 수정처리 [ 메소드 별도 존재x /  엔티티 객체 <--매핑--> 레코드 / 엔티티 객체 필드를 수정 : @Transactional ]
             entity.setBtitle(boardDto.getBtitle());
             entity.setBcontent(boardDto.getBcontent());
-            entity.setBfile(boardDto.getBfile());
+            //entity.setBfile(boardDto.getBfile());
             return true;
         } else {
             return false;
@@ -155,6 +244,7 @@ public class Boardservice {
 
     //비회원글등록
 
+    @Transactional //카테고리
     public boolean nomember(NomemberDto nomemberDto){
         NomemberEntity nc = repository.save(nomemberDto.entity());
         System.out.println(nomemberDto);
@@ -162,6 +252,48 @@ public class Boardservice {
             return true;
         }else{return false;}
     }
+
+
+
+        public  boolean nwrite(NwriteDto nwriteDto){
+
+            NwriteEntity nc = nwriteRepository.save(nwriteDto.toEntity());
+            System.out.println(nc.toString()+"111");
+            Optional<NomemberEntity>optional = repository.findById(nwriteDto.getNno());
+            if(!optional.isPresent()){return false;}
+            NomemberEntity nomemberEntity = optional.get();
+            if(nwriteDto.getWno()!=0){
+
+                if(nwriteDto.getCfile()!=null){
+                    String uuid = UUID.randomUUID().toString();
+                    String cfilename = uuid +"_"+nwriteDto.getCfile().getOriginalFilename();
+                    nc.setCfile(cfilename);
+
+                }
+            }
+
+
+
+            if(nc.getWno()!= 0){
+               // nc.getEntity().add(nc);
+                return true;
+            }else{return false;}
+
+    }
+        //비회원 리스트
+        public List<NomemberDto> clist() {
+            List<NomemberEntity> entityList =repository.findAll();
+            List<NomemberDto>dtolist = new ArrayList<>();
+            System.out.println(dtolist+"11");
+            System.out.println(entityList.toString());
+            entityList.forEach(e -> dtolist.add(e.noDto()));
+            return  dtolist;
+        }
+
+
+
+
+
 }
 //for (int i = 0; i < entityList.size(); i++) {
 //            BcategoryEntity e = entityList.get(i);

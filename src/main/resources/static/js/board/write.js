@@ -1,5 +1,6 @@
 
 let bcno = 2; // 카테고리 번호 전역변수
+/*
 function setboard(){
 
 let data = {
@@ -8,7 +9,7 @@ let data = {
     bfile : document.querySelector('.bfile').value,
     bcno : bcno
 }
-  $.ajax({
+  $.ajax({ // http 사용하는 jquery 비동기 통신 함수 [ 기본값 contentType : text / html ]
     url : "/board/setboard",
     type : "post",
     data : JSON.stringify(data),
@@ -23,6 +24,32 @@ let data = {
 
     })
 }
+
+*/
+function setboard(){
+
+ let boardform = document.querySelector('.boardform')
+ let formdata = new FormData(boardform)
+
+ formdata.set("bcno" , bcno) //폼데이터에 카테고리 정보 추가
+
+  $.ajax({ // http 사용하는 jquery 비동기 통신 함수 [ 기본값 contentType : text / html ]
+    url : "/board/setboard",
+    type : "post",   //multipart(첨부파일)
+    data : formdata,
+    contentType : false,  //multipart(첨부파일)
+    processData : false, // multipart (첨부파일)
+    success : function(re){
+        if(re==true){
+            alert("글작성성공")
+            location.href="/board/list"
+            }
+        else{alert("글작성실패");}
+        }
+
+    })
+}
+
 
 
 function setbcategory(){

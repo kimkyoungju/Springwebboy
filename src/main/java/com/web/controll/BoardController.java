@@ -3,6 +3,7 @@ package com.web.controll;
 import com.web.domain.dto.BcategoryDto;
 import com.web.domain.dto.BoardDto;
 import com.web.domain.dto.NomemberDto;
+import com.web.domain.dto.NwriteDto;
 import com.web.service.Boardservice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -39,18 +40,26 @@ public class BoardController {
     @GetMapping("/update")// URL  : localhost:8080/board/update 요청시 해당 html 반환
     public Resource getupdate(){ return new ClassPathResource("templates/board/update.html"); }
     // 비회원
-    @GetMapping("/nomember")
-    public  Resource nomember(){ return new ClassPathResource("templates/board/nomember.html");}
+
+
+    // 2. 게시물 목록 조회 [ 페이징,검색 ]
+
     // ----------- 3.요청과응답 처리 [model] --------------//
     // 1. HTTP 요청 메소드 매핑 : @PostMapping @GetMapping @DeleteMapping @PutMapping
     // 2. HTTP 데이터 요청 메소드 매핑 : @RequestBody @RequestParam @PathVariable
-    // 1. 게시물 쓰기 [ 첨부파일 ]
-    @PostMapping("/setboard")
+    // 1. 게시물 쓰기 [ 첨부파일 없을때 ]
+   /* @PostMapping("/setboard")
     public boolean setboard( @RequestBody BoardDto boardDto ){
-        System.out.println(boardDto.toString());
+        System.out.println("확인"+boardDto.toString());
+        return boardService.setboard( boardDto);
+    }*/
+    //. 게시물 쓰기 [ 첨부파일 있을때 ]
+    @PostMapping("/setboard")
+    public boolean setboard( BoardDto boardDto ){
+        System.out.println("확인"+boardDto.toString());
         return boardService.setboard( boardDto);
     }
-    // 2. 게시물 목록 조회 [ 페이징,검색 ]
+
     @GetMapping("/boardlist")
     public List<BoardDto> boardlist(@RequestParam("bcno") int bcno ){
         return boardService.boardlist(bcno);
@@ -83,10 +92,11 @@ public class BoardController {
         return boardService.bcategoryList();
     }
 
-    //비회원
-    @PostMapping("/nomemberwrite")
-    public boolean nomember(@RequestBody NomemberDto ndto){
-        return boardService.nomember(ndto);
+
+    //8.첨부파일 다은로드
+    @GetMapping("/filedownload")
+    public void filedownload(@RequestParam("filename") String filename){
+        boardService.filedownload(filename);
     }
 
 

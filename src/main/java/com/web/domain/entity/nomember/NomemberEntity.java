@@ -4,6 +4,7 @@ import com.web.domain.dto.NomemberDto;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 
 @Entity // 엔티티 정의
 @Table(name = "nomember") // 테이블명 정의
@@ -22,22 +23,21 @@ public class NomemberEntity {
     @Column
     private String ncategory;
 
-    @Column( columnDefinition = "TEXT")
-    private String ncontent;
 
+/*
     @ManyToOne
     @JoinColumn(name ="write")
     @ToString.Exclude
     private  NwriteEntity nwriteEntity;
+*/
 
 
 
     public NomemberDto noDto() {
-
         return  NomemberDto.builder()
                 .nno(this.nno)
                 .ncategory(this.ncategory)
-                .ncontent( this.ncontent)
+                .nno(this.nno)
                 .build();
 
 

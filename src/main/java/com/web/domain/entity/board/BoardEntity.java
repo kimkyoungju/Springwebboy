@@ -6,6 +6,7 @@ import com.web.domain.entity.bcategory.BcategoryEntity;
 import com.web.domain.entity.member.MemberEntity;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 
@@ -30,7 +31,7 @@ public class BoardEntity extends BaseEntity {
     @Column( nullable = false )     // not null
     @ColumnDefault( "0" )           // JPA insert 할 경우 default
     private int bview;          // 조회수
-    @Column( nullable = false )     // not null
+    @Column     // not null
     private String bfile;       // 첨부파일
       // 카테고리[ 카테고리-fk ]
     // 작성일,수정일 -> 상속( 여러 엔티티해서 사용되는 필드라서 )
@@ -56,8 +57,10 @@ public class BoardEntity extends BaseEntity {
                 .btitle( this.btitle )
                 .bcontent( this.bcontent )
                 .bview( this.bview )
-                .bfile( this.bfile )
+               // .bfile( this.bfile )
                 .memail( this.memberEntity.getMemail().split("@")[0])
                 .build();
     }
+
+
 }

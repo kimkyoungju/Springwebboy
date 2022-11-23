@@ -10,7 +10,7 @@ function boardlist(){
     url : "/board/boardlist",
     type : "get",
     data : {"bcno" : bcno},
-    success : function(list){
+     success : function(list){
      let html = '<tr>  <th> 번호 </th> <th> 제목 </th> <th> 작성자 </th></tr>';
                 list.forEach( (b) => {
                     html +=

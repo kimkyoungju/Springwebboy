@@ -2,6 +2,7 @@ package com.web.domain.dto;
 
 import com.web.domain.entity.board.BoardEntity;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 //롬복 : 생성자 ,Get/Set , ToString, 빌더 패턴
 @NoArgsConstructor @AllArgsConstructor@Getter @Setter @ToString @Builder
@@ -11,8 +12,8 @@ public class BoardDto {
     private String bcontent;    // 게시물 내용
     private int bview;          // 조회수
     private int bcno;
-    private String bfile;       // 첨부파일
-    private int mno;            // 작성자[회원번호-fk]
+    private MultipartFile bfile;       // 첨부파일
+
     private String memail;     // 회원 아이디
     //1. 형변환
     public BoardEntity toEntity(){
@@ -22,7 +23,7 @@ public class BoardDto {
                 .btitle( this.btitle )
                 .bcontent( this.bcontent )
                 .bview( this.bview )
-                .bfile( this.bfile )
+               // .bfile( this.bfile )
                 .build();
     }
 }
