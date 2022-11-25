@@ -18,6 +18,7 @@ public class NwriteDto {
    private String ntitle;
    private int nno;
    private MultipartFile cfile;
+   private String cfilename;
    public NwriteEntity toEntity(){
        return NwriteEntity.builder()
                .wno(this.wno)

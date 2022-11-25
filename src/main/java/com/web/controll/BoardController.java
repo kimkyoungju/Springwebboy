@@ -74,12 +74,17 @@ public class BoardController {
     public boolean delboard( @RequestParam("bno") int bno ){
         return boardService.delboard( bno );
     }
-    // 5. 게시물 수정 [ 첨부파일 ]
+   /* // 5. 게시물 수정 [ 첨부파일 ]
     @PutMapping("/upboard")
     public boolean update( @RequestBody BoardDto boardDto){
         return boardService.upboard( boardDto );
     }
-
+*/
+   // 5. 게시물 수정 [ 첨부파일 ]
+   @PutMapping("/upboard")
+   public boolean update( BoardDto boardDto){
+       return boardService.upboard( boardDto );
+   }
     //6.카테고리 등록
     @PostMapping("/setbcategory")
 

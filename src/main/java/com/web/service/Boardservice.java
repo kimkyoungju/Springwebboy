@@ -104,6 +104,40 @@ public class Boardservice {
         }
 
     }
+
+    //첨부파일 업로드
+    @Transactional
+    public  boolean fileupload(BoardDto boardDto,BoardEntity boardEntity){
+
+        if(boardDto.getBfile() != null) {
+            String uuid = UUID.randomUUID().toString();
+            String filename = uuid + "_" + boardDto.getBfile().getOriginalFilename(); //업로드된 파일의 이름
+            //1. pk+ 파일명 [uuid(범용 고유 식별자 클래스)]
+            //2.uuid + 파일명
+
+            //3. 업로드 날짜/ 시간 + 파일명
+            //4 중복된 파일명 검색해서 파일명 뒤에 + 중복수 + 1
+
+
+            //첨부파일명 db에 등록
+            boardEntity.setBfile(filename);//난수 + 파일명 엔티티저장
+
+
+            //업로드 3. 저장할 경로
+            try {
+                File uploadfile = new File(path + filename); //4. 경로 + 파일명[ 객체화]
+                boardDto.getBfile().transferTo(uploadfile);  // 5. 해당 객체 경로로 업로드
+
+            } catch (Exception e) {
+                System.out.println("첨부파일 업로드");
+            }
+            return true;
+        }else{
+            return false;
+        }
+
+
+    }
      // 1. 게시물 쓰기
     @Transactional
     public boolean setboard(BoardDto boardDto) {
@@ -126,30 +160,8 @@ public class Boardservice {
                 //.transferTo(파일객체)
                 //file : java 외 파일을 객체화 클래스
                     //new file("경로") : 해당 경로의 파일을 저장
-            if(boardDto.getBfile() != null) {
-                String uuid = UUID.randomUUID().toString();
-                String filename = uuid + "_" + boardDto.getBfile().getOriginalFilename(); //업로드된 파일의 이름
-                //1. pk+ 파일명 [uuid(범용 고유 식별자 클래스)]
-                //2.uuid + 파일명
 
-                //3. 업로드 날짜/ 시간 + 파일명
-                //4 중복된 파일명 검색해서 파일명 뒤에 + 중복수 + 1
-
-
-                //첨부파일명 db에 등록
-                boardEntity.setBfile(filename);//난수 + 파일명 엔티티저장
-
-
-                //업로드 3. 저장할 경로
-                try {
-                    File uploadfile = new File(path + filename); //4. 경로 + 파일명[ 객체화]
-                    boardDto.getBfile().transferTo(uploadfile);  // 5. 해당 객체 경로로 업로드
-
-                } catch (Exception e) {
-                    System.out.println("첨부파일 업로드");
-                }
-            }
-
+            fileupload(boardDto ,boardEntity);
             //fk 대입
             boardEntity.setMemberEntity(memberEntity);
             //양방향 [pk필드에 fk연결]
@@ -198,6 +210,15 @@ public class Boardservice {
         Optional<BoardEntity> optional = boardRepository.findById(bno);
         if (optional.isPresent()) {
             BoardEntity entity = optional.get();
+           //첨부파일 같이 삭제
+            if(entity.getBfile() != null) {
+                File file = new File(path + entity.getBfile());
+                if (file.exists()) {
+                    file.delete();
+                }
+            }
+
+
             boardRepository.delete(entity); // 찾은 엔티티를 삭제한다.
             return true;
         } else {
@@ -205,13 +226,30 @@ public class Boardservice {
         }
     }
 
-    // 5. 게시물 수정 [ 첨부파일 ]
+    // 5. 게시물 수정 [ 첨부파일 1.첨부파일 있을때 -> 첨부파일변경, 2. 첨부파일없을때 -> 첨부파일 추가 ]
     @Transactional
     public boolean upboard(BoardDto boardDto) {
         // 1. DTO에서 수정할 PK번호 이용해서 엔티티 찾기
         Optional<BoardEntity> optional = boardRepository.findById(boardDto.getBno());
         if (optional.isPresent()) {  // 2.
             BoardEntity entity = optional.get();
+
+            //기존 첨부파일있을때
+
+
+            //1. 수정할 첨부파일이 있을때--> 기존첨부파일 삭제후 새로운파일 업로드->
+            if(boardDto.getBfile() != null){
+                if(entity.getBfile() != null) {
+                    File file = new File(path + entity.getBfile());
+                    if (file.exists()) {
+                        file.delete();
+                    }
+                     entity.setBfile(null); //db처리
+                }
+                    //기존 첨부파일 없을떄
+                fileupload(boardDto, entity);
+            }
+
             // * 수정처리 [ 메소드 별도 존재x /  엔티티 객체 <--매핑--> 레코드 / 엔티티 객체 필드를 수정 : @Transactional ]
             entity.setBtitle(boardDto.getBtitle());
             entity.setBcontent(boardDto.getBcontent());
@@ -254,32 +292,51 @@ public class Boardservice {
     }
 
 
+    @Transactional //
+    public boolean nfileupload(NwriteDto nwriteDto ,NwriteEntity nwriteEntity){
+        if(nwriteDto.getCfile()!=null){
+            String uuid = UUID.randomUUID().toString();
+            String cfilename = uuid +"_"+nwriteDto.getCfile().getOriginalFilename();
+            //nc.setCfile(cfilename);
+            //첨부파일명 db에 등록
+            nwriteEntity.setCfile(cfilename);
+            try {
+                File upload = new File(path + cfilename);
+                nwriteDto.getCfile().transferTo(upload);
+            }catch (Exception e){System.out.println("첨부실패");}
 
-        public  boolean nwrite(NwriteDto nwriteDto){
+        }
+        return false;
+    }
+
+
+
+
+
+        public  boolean nwrite(NwriteDto nwriteDto) {
 
             NwriteEntity nc = nwriteRepository.save(nwriteDto.toEntity());
-            System.out.println(nc.toString()+"111");
-            Optional<NomemberEntity>optional = repository.findById(nwriteDto.getNno());
-            if(!optional.isPresent()){return false;}
+            System.out.println(nc.toString() + "111");
+            Optional<NomemberEntity> optional = repository.findById(nwriteDto.getNno());
+            if (!optional.isPresent()) {
+                return false;
+            }
             NomemberEntity nomemberEntity = optional.get();
-            if(nwriteDto.getWno()!=0){
+            NwriteEntity nwriteEntity = nwriteRepository.save(nwriteDto.toEntity());
+            if (nc.getWno() != 0) {
 
-                if(nwriteDto.getCfile()!=null){
-                    String uuid = UUID.randomUUID().toString();
-                    String cfilename = uuid +"_"+nwriteDto.getCfile().getOriginalFilename();
-                    nc.setCfile(cfilename);
+                nfileupload(nwriteDto, nwriteEntity);
 
-                }
+                nwriteEntity.setNomemberEntity(nomemberEntity);
+                nomemberEntity.getNentityList().add(nwriteEntity);
+
+
+                return true;
+            } else {
+                return false;
             }
 
-
-
-            if(nc.getWno()!= 0){
-               // nc.getEntity().add(nc);
-                return true;
-            }else{return false;}
-
-    }
+        }
         //비회원 리스트
         public List<NomemberDto> clist() {
             List<NomemberEntity> entityList =repository.findAll();

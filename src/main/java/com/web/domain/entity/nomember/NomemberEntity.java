@@ -1,10 +1,12 @@
 package com.web.domain.entity.nomember;
 
 import com.web.domain.dto.NomemberDto;
+import com.web.domain.entity.board.BoardEntity;
 import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity // 엔티티 정의
 @Table(name = "nomember") // 테이블명 정의
@@ -23,6 +25,10 @@ public class NomemberEntity {
     @Column
     private String ncategory;
 
+    @OneToMany(mappedBy = "entity")
+    @Builder.Default
+    private List<BoardEntity> nentityList
+            = new ArrayList<>();
 
 /*
     @ManyToOne
@@ -42,5 +48,6 @@ public class NomemberEntity {
 
 
     }
+
 
 }

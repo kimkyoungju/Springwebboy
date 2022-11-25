@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:3000")//요청포트 변경 어노테이션
 @RestController
 @RequestMapping("/member") // 공통 URL 매핑 주소
 public class MemberController {

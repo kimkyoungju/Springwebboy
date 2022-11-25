@@ -20,12 +20,12 @@ public class NmemberController {
     @GetMapping("/nomember")
     public Resource nomember(){ return new ClassPathResource("templates/board/nomember.html");}
 
-    @PostMapping("/nomemberwrite")
+    @PostMapping("/ncategory")
     public boolean nomember(@RequestBody NomemberDto ndto){
         return boardService.nomember(ndto);
     }
     @PostMapping("/nwrite")
-    public boolean nwrite(@RequestBody NwriteDto dto){
+    public boolean nwrite( NwriteDto dto){
         return boardService.nwrite(dto);
     }
 

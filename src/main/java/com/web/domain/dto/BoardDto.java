@@ -13,7 +13,7 @@ public class BoardDto {
     private int bview;          // 조회수
     private int bcno;
     private MultipartFile bfile;       // 첨부파일
-
+    private String bfilename; //출력
     private String memail;     // 회원 아이디
     //1. 형변환
     public BoardEntity toEntity(){
@@ -23,7 +23,7 @@ public class BoardDto {
                 .btitle( this.btitle )
                 .bcontent( this.bcontent )
                 .bview( this.bview )
-               // .bfile( this.bfile )
+
                 .build();
     }
 }

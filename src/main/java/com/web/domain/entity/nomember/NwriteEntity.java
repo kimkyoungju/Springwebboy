@@ -2,8 +2,8 @@ package com.web.domain.entity.nomember;
 
 
 import com.web.domain.dto.NwriteDto;
+import com.web.domain.entity.board.BoardEntity;
 import lombok.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 
@@ -16,7 +16,7 @@ import javax.persistence.*;
 @Builder
 @ToString // 롬복
 
-public class NwriteEntity  {
+public class NwriteEntity extends BoardEntity {
 
 
     @Id
@@ -29,12 +29,12 @@ public class NwriteEntity  {
     private String ncontent;
 
     @Column
-    private MultipartFile cfile;
+    private String cfile;
+
     @ManyToOne
     @JoinColumn(name ="nno")
     @ToString.Exclude
-    private NomemberEntity entity;
-
+    private NomemberEntity nomemberEntity;
 
 
 
@@ -43,9 +43,10 @@ public class NwriteEntity  {
                 .wno(this.wno)
                 .ntitle(this.ntitle)
                 .ncontent(this.ncontent)
-
+                .cfilename(this.cfile)
                 .build();
 
     }
+
 
 }

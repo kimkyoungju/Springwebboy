@@ -16,7 +16,7 @@ function nadd(){
 
 
     $.ajax({
-        url : "/Nmember/nomemberwrite",
+        url : "/Nmember/ncategory",
         type : "post",
         data : JSON.stringify(data),
         contentType : "application/json",
