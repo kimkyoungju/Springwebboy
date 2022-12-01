@@ -6,6 +6,8 @@ import reportWebVitals from './reportWebVitals';
 //1. 사용할 컴포넌트 호출 [ import 컴포넌트명 from 파일명]
 import Library from './chapter3/Library';
 import Clock from './chapter4/Clock'
+import CommentList from './chapter5/CommentList'
+import Signup from './component/member/Signup'
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -22,6 +24,7 @@ root.render(
 */
 //setInterval(()=>{},밀리초)
     //setInterval((인수)=>{실행문},밀리초)
+/*
     setInterval(()=>{
 
             root.render(
@@ -31,6 +34,20 @@ root.render(
             );
     },1000);
 
+*/
+
+//4.
+/*root.render(
+  <React.StrictMode>
+    <CommentList />
+  </React.StrictMode>
+);*/
+
+root.render(
+  <React.StrictMode>
+    <Signup />
+  </React.StrictMode>
+);
 
 
 

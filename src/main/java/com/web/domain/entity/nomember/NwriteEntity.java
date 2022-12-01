@@ -2,6 +2,7 @@ package com.web.domain.entity.nomember;
 
 
 import com.web.domain.dto.NwriteDto;
+import com.web.domain.entity.BaseEntity;
 import com.web.domain.entity.board.BoardEntity;
 import lombok.*;
 
@@ -16,7 +17,7 @@ import javax.persistence.*;
 @Builder
 @ToString // 롬복
 
-public class NwriteEntity extends BoardEntity {
+public class NwriteEntity extends BaseEntity {
 
 
     @Id
@@ -46,7 +47,7 @@ public class NwriteEntity extends BoardEntity {
                 .cfilename(this.cfile)
                 .build();
 
-    }
+        }
 
 
 }

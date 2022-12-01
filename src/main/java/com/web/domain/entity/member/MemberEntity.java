@@ -35,7 +35,8 @@ public class MemberEntity extends BaseEntity {
     @OneToMany(mappedBy = "memberEntity")// 1: n pk에 해당 어놑테이션
     @Builder.Default // 빌더사용시 해당 필드의 초기값 설정
     private List<BoardEntity>boardEntityList = new ArrayList<>();
-
+    @Column // 회원 등급
+    private String mrol;
     //2. 생성자 [롬복으로 사용]
     //3. 메소드 [롬복으로 사용]
     public MemberDto toDto() {

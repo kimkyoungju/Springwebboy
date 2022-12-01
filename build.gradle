@@ -26,7 +26,8 @@ dependencies {
     runtimeOnly 'com.mysql:mysql-connector-j' //SQL
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa' //스프링데이터 jpa
     implementation 'org.springframework.boot:spring-boot-starter-mail' // 스프링 메일 전송 SMTP mail
-
+    implementation 'org.springframework.boot:spring-boot-starter-security' //스프링 security
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'//오어스2
     /*
         ORM : 객체 관계 매핑
 

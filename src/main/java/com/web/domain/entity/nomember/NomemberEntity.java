@@ -25,11 +25,11 @@ public class NomemberEntity {
     @Column
     private String ncategory;
 
-    @OneToMany(mappedBy = "entity")
+ /*   @OneToMany(mappedBy = "entity")
     @Builder.Default
-    private List<BoardEntity> nentityList
+    private List<BoardEntity> entityList
             = new ArrayList<>();
-
+*/
 /*
     @ManyToOne
     @JoinColumn(name ="write")

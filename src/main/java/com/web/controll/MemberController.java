@@ -64,12 +64,12 @@ public class MemberController {
         return result;
     }
 
-    @PostMapping("/getmember")
+   /* @PostMapping("/getmember") 시큐리티 사용시 필요없음
     public int getmember(@RequestBody MemberDto memberDto) {
 
         int result = memberService.getmember(memberDto);
         return result;
-    }
+    }*/
 
     @GetMapping("/getpassword")
     public String getpassword(@RequestParam("memail") String memail) {
@@ -98,16 +98,16 @@ public class MemberController {
     }
 
     @GetMapping("/getloginMno") //로그인 정보 확인
-    public int getloginMno() {
-        int result = memberService.getloginMno();
+    public String getloginMno() {
+        String result = memberService.getloginMno();
         return result;
     }
 
-    @GetMapping("/logout") // 로그아웃
+    /*@GetMapping("/logout") // 로그아웃
     public int logout() {
         int result = memberService.logout();
         return result;
-    }
+    }*/
 
     @GetMapping("/list") // 회원목록 �
     @ResponseBody

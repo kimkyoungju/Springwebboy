@@ -1,24 +1,74 @@
 package com.web.service;
 
 import com.web.domain.dto.MemberDto;
+import com.web.domain.dto.OauthDto;
 import com.web.domain.entity.member.MemberEntity;
 import com.web.domain.entity.member.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 @Service // 해당 클래스가 service 명시
-public class MemberService {
+public class MemberService
+        implements UserDetailsService ,
+        OAuth2UserService<OAuth2UserRequest , OAuth2User> {
+    //UserDetailsService : 일반회원 -->LoadUserByUsername
+    //  OAuth2UserService<OAuth2UserRequest , OAuth2User>  : 소셜회원
+    @Override // 로그인 성공한 소셜 회원정보 받는 메소드
+    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
+        System.out.println("1."+userRequest.toString());
+        //1. 인증 결과 정보 요청
+        OAuth2UserService oAuth2UserService = new DefaultOAuth2UserService();
+            OAuth2User oAuth2User = oAuth2UserService.loadUser(userRequest);
+            System.out.println("2."+oAuth2User.toString());
+        //2. oauth2 클라이언트 식별 [ 카카오 vs네이버 vs 구글]
+        String registrationId = userRequest.getClientRegistration().getRegistrationId();
+        System.out.println("3.oauth2 회사명 " + registrationId);
+        //3. 회원정보 담는 객체
+        String oauth2UserInfo = userRequest
+                .getClientRegistration()
+                .getProviderDetails()
+                .getUserInfoEndpoint()
+                .getUserNameAttributeName();
+
+            System.out.println("회원정보" + oauth2UserInfo);
+            System.out.println("인증결과" +oAuth2User.getAttributes());
+            //4. 요청 정보 원본
+
+            //4.dto처리
+        OauthDto oauthDto = OauthDto.of(registrationId,oauth2UserInfo,oAuth2User.getAttributes());
+
+
+        //권한
+        Set<GrantedAuthority>authorities = new HashSet<>();
+        authorities.add(new SimpleGrantedAuthority("kakaoUser"));
+            //*.DB 처리
+        MemberDto memberDto = new MemberDto();
+            memberDto.setMemail(oauthDto.getMemail());
+            memberDto.setAuthorities(authorities);
+            memberDto.setAttributes(oauthDto.getAttributes());
+        return memberDto;
+    }
     //------------------전역객체------------//
     @Autowired
     private MemberRepository memberRepository; //리포지토리 객체
@@ -49,19 +99,42 @@ public class MemberService {
 
    }
 
-    @Transactional // 트랜잭션
-    public int setmember(MemberDto memberDto) {
-        //1. q비지니스 로직 [ 알고리즘 - 기능 ]
-        //2. DAO처리 [Dto --> entity]
-        MemberEntity entity = memberRepository.save(memberDto.toEntity());
-        //memberRepository.save(엔티티 객체 ) : 해당 엔티티 객체가 insert 생성된 엔티티 객체
-        //entity.setMemail("asd@asda");
-        //2. 결과반환 [생성된 엔티티의 pk값 반환]
+    @Transactional
+    public int setmember(MemberDto memberDto ){
+        // 암호화 : 해시함수 사용하는 암호화 기법중 하나 [ BCrypt ]
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        memberDto.setMpassword( passwordEncoder.encode( memberDto.getPassword() ) );
+        // 1. DAO 처리 [ insert ]
+        MemberEntity entity = memberRepository.save( memberDto.toEntity() );
+        // memberRepository.save( 엔티티 객체 ) : 해당 엔티티 객체가 insert 생성된 엔티티객체 반환
+        // 회원 등급 넣어주기
+        entity.setMrol("user");
+
+        // 2. 결과 반환 [ 생성된 엔티티의 pk값 반환 ]
         return entity.getMno();
     }
+    // 2. [ 시큐리티 사용시 ] 로그인 인증 메소드 재정의
+    @Override
+    public UserDetails loadUserByUsername(String memail ) throws UsernameNotFoundException {
+        // 1. 입력받은 아이디 [ memail ] 로 엔티티 찾기
+        MemberEntity memberEntity = memberRepository.findByMemail( memail )
+                .orElseThrow( ()-> new UsernameNotFoundException("사용자가 존재하지 않습니다,") ); // .orElseThrow : 검색 결과가 없으면 화살표함수[람다식]를 이용한
+        // 2. 검증된 토큰 생성
+        Set<GrantedAuthority>  authorities = new HashSet<>();
+        authorities.add(
+                new SimpleGrantedAuthority( memberEntity.getMrol() )
+        ); // 토큰정보에 일반회원 내용 넣기
+        // 3.
+        MemberDto memberDto = memberEntity.toDto(); // 엔티티 --> Dto
+        memberDto.setAuthorities( authorities );       // dto --> 토큰 추가
+        return memberDto; // Dto 반환 [ MemberDto는 UserDetails 의 구현체 ]
+        // 구현체 : 해당 인터페이스의 추상메소드[선언만]를 구현해준 클래스의 객체
+    }
 
-    //로그인
-    @Transactional
+
+
+    //로그인 [ 시큐리티 사용시 필요없음 ]
+   /* @Transactional
     public int getmember(MemberDto memberDto) {
         //Dao처리[ select] findById : 아이디 검색 , findAll :select
         // 모든 엔티티 = 레코드 호출 findAll :select * from]
@@ -82,7 +155,7 @@ public class MemberService {
         }
         return 0; // 로그인 실패
 
-    }
+    }*/
 
     //3. 비밀번호 찾기
     @Transactional
@@ -152,7 +225,7 @@ public class MemberService {
     }
 
     //6 세션 로그인 여부 판단
-    public int getloginMno() {
+   /* public int getloginMno() {
         Object object = request.getSession().getAttribute("loginMno");
 
         if (object != null) {
@@ -161,17 +234,31 @@ public class MemberService {
             return 0;
         }
 
+    }*/
+    // 6. 로그인 여부 판단 메소드 [ principal 세션 ]
+    public String getloginMno(){
+        //1. 인증된 토큰 확인      [ SecurityContextHolder 인증된 토큰 보관소 ---> UserDetails(MemberDto) ]
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        //2. 인증된 토큰 내용 확인
+        Object principal = authentication.getPrincipal(); // Principal:접근주체 [ UserDetails(MemberDto) ]
+        System.out.println("토큰 내용확인 : " + principal );
+        // 3. 토큰 내용에 따른 제어
+        if( principal.equals("anonymousUser") ){ // anonymousUser 이면 로그인전
+            return null;
+        }else{ // anonymousUser 아니면 로그인후
+            MemberDto memberDto = (MemberDto) principal;
+            return memberDto.getMemail()+"_"+memberDto.getAuthorities();
+        }
     }
-
     //7. 로그아웃
-    public int logout() {
+   /* public int logout() {
         Object object = request.getSession().getAttribute("loginMno");
         if (object != null) {
             request.getSession().setAttribute("loginMno", null);
             return 1;
         }
         return 0;
-    }
+    }*/
     //8. 회원목록 서비스
     public List<MemberDto>list(){
         //1. jpa 이용한 모든 엔티티 호출
@@ -226,6 +313,7 @@ public class MemberService {
            System.out.println("메일전송실패" +e);
        }
     }
+
 
 }
 

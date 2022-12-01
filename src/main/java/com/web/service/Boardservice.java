@@ -328,7 +328,8 @@ public class Boardservice {
                 nfileupload(nwriteDto, nwriteEntity);
 
                 nwriteEntity.setNomemberEntity(nomemberEntity);
-                nomemberEntity.getNentityList().add(nwriteEntity);
+
+               //nomemberEntity.getNentityList().add(nomemberEntity);
 
 
                 return true;

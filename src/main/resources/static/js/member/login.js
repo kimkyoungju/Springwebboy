@@ -1,3 +1,4 @@
+/*
 
 
 
@@ -32,3 +33,4 @@ function getmember(){
 
  // document.querySelector(".insertemail").innerHTML = "이메일 입력 : <input type="text" class="findpa">"
 
+*/
