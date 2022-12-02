@@ -10,6 +10,7 @@
 //1.
 import React from 'react'
 import styles from './Comment.css'
+import logo from '../../logo.svg'
 //2.
 function Comment(props){
 

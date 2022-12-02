@@ -59,12 +59,31 @@ public class MemberService
         OauthDto oauthDto = OauthDto.of(registrationId,oauth2UserInfo,oAuth2User.getAttributes());
 
 
+        //*.DB 처리
+        // 1 이메일로 엔티티 검색 [ 가입 or기존회원 구분]
+        Optional<MemberEntity>optional
+                = memberRepository.findByMemail(oauthDto.getMemail());
+                MemberEntity memberEntity = null;
+              if(optional.get().getMrol().equals(registrationId)){
+                memberEntity = optional.get();
+            }else{ // 기존회원이 아니면 [ 가입 ]
+                memberEntity =  memberRepository.save(oauthDto.toentity());
+            }
+
+
+/*
+        memberRepository.findByMemail(oauthDto.getMemail())
+                .orElseThrow(()->);
+*/
+
+
         //권한
         Set<GrantedAuthority>authorities = new HashSet<>();
-        authorities.add(new SimpleGrantedAuthority("kakaoUser"));
-            //*.DB 처리
+        authorities.add(new SimpleGrantedAuthority(memberEntity.getMrol()));
+
+        //5. 반환
         MemberDto memberDto = new MemberDto();
-            memberDto.setMemail(oauthDto.getMemail());
+            memberDto.setMemail(memberEntity.getMemail());
             memberDto.setAuthorities(authorities);
             memberDto.setAttributes(oauthDto.getAttributes());
         return memberDto;
@@ -119,7 +138,9 @@ public class MemberService
         // 1. 입력받은 아이디 [ memail ] 로 엔티티 찾기
         MemberEntity memberEntity = memberRepository.findByMemail( memail )
                 .orElseThrow( ()-> new UsernameNotFoundException("사용자가 존재하지 않습니다,") ); // .orElseThrow : 검색 결과가 없으면 화살표함수[람다식]를 이용한
-        // 2. 검증된 토큰 생성
+            //소셜 회원도 [일반회원처럼 로그인하게 해줄건지]
+
+        // 2. 검증된 토큰 생성 [일반회원]
         Set<GrantedAuthority>  authorities = new HashSet<>();
         authorities.add(
                 new SimpleGrantedAuthority( memberEntity.getMrol() )

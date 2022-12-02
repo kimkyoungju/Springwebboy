@@ -26,14 +26,15 @@ public class MemberEntity extends BaseEntity {
     private int mno; //회원번호 필드
     @Column (nullable = false) // not null
     private String memail; // 회원이메일 = 회원아이디 필드
-    @Column (nullable = false) //  not null
+    @Column
     private String mpassword; // 회원 비밀번호 필드
 
-    @Column(nullable = false)//  notnull
+    @Column
     private String mphone ; //회원전화
 
     @OneToMany(mappedBy = "memberEntity")// 1: n pk에 해당 어놑테이션
     @Builder.Default // 빌더사용시 해당 필드의 초기값 설정
+
     private List<BoardEntity>boardEntityList = new ArrayList<>();
     @Column // 회원 등급
     private String mrol;

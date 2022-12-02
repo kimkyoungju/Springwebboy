@@ -1,5 +1,6 @@
 package com.web.domain.dto;
 
+import com.web.domain.entity.member.MemberEntity;
 import lombok.*;
 
 import java.util.Map;
@@ -63,6 +64,14 @@ public class OauthDto {
                 .registrationId(registrationId)
                 .attributes(attributes)
                 .build();
+    }
+    //4. dto -> toentity
+    public MemberEntity toentity(){
+        return  MemberEntity.builder()
+                .memail(this.memail)
+                .mrol(this.registrationId)
+                .build();
+
     }
 
 }
