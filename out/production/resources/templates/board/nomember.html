@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+ <h3>비회원 방문록</h3>
+
+카테고리 등록 : <input type="text" class="ncategory"><button onclick="nadd()">카테고리추가</button>
+    <div class="nwi">
+
+    </div>
+ <h1> 방문록작성 </h1>
+
+ <h3>방문록 작성</h3>
+     <form class="formd">
+         제목 : <input type="text" name="ntitle"><br>
+         내용 : <input type="text"  name="ncontent"><br>
+         첨부파일 : <input type="file" name="cfile"><br>
+     </form>
+ <button type="button" onclick="nview()">방문록등록</button>
+
+
+
+<script  src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script src="/js/board/nomember.js"></script>
+
+
+</body>
+</html>
