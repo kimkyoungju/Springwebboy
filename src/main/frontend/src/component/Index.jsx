@@ -13,8 +13,12 @@
 //1.
 import React from 'react';
 import Header from './Header';
+import Home from './Home';
 import Footer from './Footer';
 import Signup from './member/Signup';
+import Login from './member/Login';
+import BoardList from './board/BoardList'
+import BoardWrite from './board/BoardWrite'
 //라우터 설치 [ 터미널 ] npm i react-router-dom
   //import { 컴포넌트명 } from 'react-router-dom';
 //  import { BrowserRouter , Routes , Route , Link} from 'react-router-dom';
@@ -30,17 +34,17 @@ import Signup from './member/Signup';
 //2.
 export default function Index(props){
     return(
-
-            <div>
+        <div className="webbox">
                 <BrowserRouter>
-                    <Header/>
-                        <h3> 메인페이지 </h3>
-                             <h3> 메인페이지 </h3>
-                    <Footer/>
-                    <Routes>
-                            <Route path="/" />
-                            <Route path="/member/signup" element={ <Signup/> }/>
-                    </Routes>
+                         <Header/>
+                                <Routes>
+                                       <Route path="/" element={<Home />}/>
+                                       <Route path="/member/signup" element={ <Signup/> }/>
+                                       <Route path="/member/login"  element={ <Login/> }/>
+                                       <Route path="/board/list"  element={ <BoardList/> }/>
+                                        <Route path="/board/write"  element={ <BoardWrite/> }/>
+                                </Routes>
+                         <Footer/>
                 </BrowserRouter>
             </div>
     );

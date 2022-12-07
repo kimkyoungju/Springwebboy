@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/board") //스프링 MVC 관리 mapping 들의 공통 URL
 public class BoardController {
@@ -28,6 +29,7 @@ public class BoardController {
 
     // ------------2.페이지[html] 요청 로드 [view]---------------//
     // 1. 게시물목록 페이지 열기
+/*
     @GetMapping("/list") // URL  : localhost:8080/board/list 요청시 해당 html 반환
     public Resource getlist(){ return new ClassPathResource("templates/board/list.html"); }
     // 2. 게시물쓰기 페이지 열기
@@ -40,7 +42,7 @@ public class BoardController {
     @GetMapping("/update")// URL  : localhost:8080/board/update 요청시 해당 html 반환
     public Resource getupdate(){ return new ClassPathResource("templates/board/update.html"); }
     // 비회원
-
+*/
 
     // 2. 게시물 목록 조회 [ 페이징,검색 ]
 

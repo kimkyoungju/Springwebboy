@@ -9,8 +9,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
-@CrossOrigin(origins = "http://localhost:3000")//요청포트 변경 어노테이션
+/*
+@CrossOrigin(origins = "http://localhost:3000")//요청포트 변경 어노테이션*/
 @RestController
 @RequestMapping("/member") // 공통 URL 매핑 주소
 public class MemberController {
@@ -22,35 +22,33 @@ public class MemberController {
 
 
 //---------------html반환 매핑-----------------//
-    @GetMapping("/signup")
+    /*@GetMapping("/signup")
     public Resource getsignup() {
-        return new ClassPathResource("templates/member/signup.html"); // 프로젝트내 resource -> templates-> member->signup.html
+    return new ClassPathResource("templates/member/signup.html"); // 프로젝트내 resource -> templates-> member->signup.html
     }
 
     @GetMapping("/login")
     public Resource getlogin() {
-
-        return new ClassPathResource("templates/member/login.html"); // �
+    return new ClassPathResource("templates/member/login.html"); // �
 
     }
 
     @GetMapping("/findpassword")
     public Resource findpassword() {
-        return new ClassPathResource("templates/member/findpassword.html"); // �
-
+    return new ClassPathResource("templates/member/findpassword.html"); // �
     }
 
     @GetMapping("/delete")
     public Resource deletemember() {
-        return new ClassPathResource("templates/member/deletemember.html");
+    return new ClassPathResource("templates/member/deletemember.html");
     }
 
     @GetMapping("/update")
     public Resource getupdate() {
-        return new ClassPathResource("templates/member/update.html");
+    return new ClassPathResource("templates/member/update.html");
     }
 
-
+*/
     //---------------서비스/기능 매핑-----------------//
 
     @PostMapping("/setmember")  // 회원가입

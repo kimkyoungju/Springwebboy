@@ -19,9 +19,18 @@ function Signup(props) {
            //axios 비동기 통신함수 [ ajax ]
             //axios.MethodType("통신URL" ,전송할 data )
 
-           axios.post("http://localhost:8080/member/setmember" , info )
-           .then(res=>{alert(res.data)})
-
+           axios
+               .post("http://localhost:8080/member/setmember" , info )
+               .then(res=>{
+                let result = res.data;
+                alert(result)
+                if(result != 0 ){ //회원가입 성공
+                    alert("회원가입 성공")
+                }else{ // 실패
+                    alert("회원가입 실패")
+                }
+           })
+           .catch(err=>{console.log(err)})
 
         //통신 [ajax vs fetch[react내장] vs axios[react별도설치]]
         //axios 설치방법

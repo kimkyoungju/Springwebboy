@@ -61,16 +61,13 @@ public class MemberService
 
         //*.DB 처리
         // 1 이메일로 엔티티 검색 [ 가입 or기존회원 구분]
-        Optional<MemberEntity>optional
-                = memberRepository.findByMemail(oauthDto.getMemail());
+        Optional<MemberEntity>optional= memberRepository.findByMemail(oauthDto.getMemail());
                 MemberEntity memberEntity = null;
-              if(optional.get().getMrol().equals(registrationId)){
+            if(optional.isPresent()){
                 memberEntity = optional.get();
             }else{ // 기존회원이 아니면 [ 가입 ]
                 memberEntity =  memberRepository.save(oauthDto.toentity());
             }
-
-
 /*
         memberRepository.findByMemail(oauthDto.getMemail())
                 .orElseThrow(()->);
