@@ -38,11 +38,18 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()  // 기능 구분
                     .csrf() // 요청 위조 방지
                         .ignoringAntMatchers("/member/getmember") // 로그인 post 사용  // 해당 URL 요청 방지 해지
-                        .ignoringAntMatchers("/member/setmember") // 회원가입 post 사용
+                        .ignoringAntMatchers("/member/setmember")
+                        .ignoringAntMatchers("/board/setbcategory") // 회원가입 post 사용
+                        .ignoringAntMatchers("/board/setboard") // 회원가입 post 사용
+                        .ignoringAntMatchers("/board/boardlist") // 게시물 출력 post 사용
+                        .ignoringAntMatchers("/board/delboard") // 게시물 출력 post 사용
+                        .ignoringAntMatchers("/board/upboard") // 게시물 출력 post 사용
+
                 .and()// 기능 구분
                         .oauth2Login()
                         .userInfoEndpoint()
                         .userService(memberService);
+
     }
 }
 

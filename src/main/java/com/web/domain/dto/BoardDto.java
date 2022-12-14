@@ -15,6 +15,9 @@ public class BoardDto {
     private MultipartFile bfile;       // 첨부파일
     private String bfilename; //출력
     private String memail;     // 회원 아이디
+
+    private String bdate; // 작성일 [ localdatetime-> String 출력용]
+
     //1. 형변환
     public BoardEntity toEntity(){
         // * 생성자를 이용한 객체 생성 [ *빌더패턴 비교 ]

@@ -8,7 +8,7 @@ function Book(props) {
 
 
 //비동기 [백엔드 서버와 통신]
-    fetch("http://localhost:8080/member/list")//통신할 url
+    fetch("/member/list")//통신할 url
         .then((response) => response.json()) // 응답 자료형
         .then((data)=>console.log(data)); //응답
 

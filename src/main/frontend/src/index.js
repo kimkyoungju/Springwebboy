@@ -6,6 +6,7 @@ import reportWebVitals from './reportWebVitals';
 
 import Index from './component/Index'
 import Signup from './component/member/Signup'
+import BookList from './Book/BookList'
 //1. 사용할 컴포넌트 호출 [ import 컴포넌트명 from 파일명]
 
 
@@ -16,6 +17,10 @@ import CommentList from './Book/chapter5/CommentList'
 import NotificationList from './Book/chapter6/NotificationList' //6장
 import Counter from './Book/chapter7/Ex1_Hook' // 7장
 import Accommodate from './Book/chapter7/Accommodate' // 7장
+import ConfirmButton from './Book/chapter8/ConfirmButton' // 7장
+import ConfirmButton2 from './Book/chapter8/ConfirmButton2' // 7장
+import TestState from './Book/chapter8/TestState' // 7장
+import LandingPage from './Book/chapter9/LandingPage' // 7장
 // 2. Dom 컨테이너 [ public-> index.html 안에 있는 태그 ]
 const root = ReactDOM.createRoot(document.getElementById('root'));
 // * 프로젝트
@@ -26,6 +31,8 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
         <Index />
       </React.StrictMode>
     );
+
+
 
 
 //3. dom컨테이너 렌더링
@@ -68,8 +75,8 @@ root.render(
 */
 
 //6.
-/*
-root.render(
+
+/*root.render(
   <React.StrictMode>
     <NotificationList />
   </React.StrictMode>
@@ -85,8 +92,29 @@ root.render(
       <React.StrictMode>
         <Accommodate />
       </React.StrictMode>
+    );*/
+
+//8
+
+/*    root.render(
+      <React.StrictMode>
+        <ConfirmButton2 />
+      </React.StrictMode>
+    );*/
+    /*root.render(
+      <React.StrictMode>
+        <TestState />
+      </React.StrictMode>
+    );*/
+/*
+root.render(
+      <React.StrictMode>
+        <LandingPage />
+      </React.StrictMode>
     );
 */
+
+
 //3. dom 컨테이너 렌더링
 
 // If you want to start measuring performance in your app, pass a function

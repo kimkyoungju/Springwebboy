@@ -9,6 +9,8 @@ import org.hibernate.annotations.ColumnDefault;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Entity // 엔티티 정의
 @Table(name = "board") // 테이블명 정의
@@ -59,6 +61,11 @@ public class BoardEntity extends BaseEntity {
                 .bview( this.bview )
                 .bfilename( this.bfile )
                 .memail( this.memberEntity.getMemail().split("@")[0])
+                .bdate(
+                        this.getCdate().toLocalDate().toString().equals(LocalDateTime.now().toLocalDate().toString())?
+                        this.getCdate().toLocalTime().format(DateTimeFormatter.ofPattern("HH: mm :ss")) :
+                        this.getCdate().toLocalDate().toString()
+                )
                 .build();
     }
 

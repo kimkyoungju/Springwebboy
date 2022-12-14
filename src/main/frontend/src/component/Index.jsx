@@ -19,6 +19,27 @@ import Signup from './member/Signup';
 import Login from './member/Login';
 import BoardList from './board/BoardList'
 import BoardWrite from './board/BoardWrite'
+import Boardview from './board/Boardview'
+import BoardUpdate from './board/BoardUpdate'
+
+
+import BookList from '../Book/BookList'
+import Library from '../Book/chapter3/Library';
+import Clock from '../Book/chapter4/Clock'
+import CommentList from '../Book/chapter5/CommentList'
+import NotificationList from '../Book/chapter6/NotificationList' //6장
+import Accommodate from '../Book/chapter7/Accommodate' // 7장
+import TestState from '../Book/chapter8/TestState' // 7장
+import LandingPage from '../Book/chapter9/LandingPage' // 7장
+import AttendanceBook from '../Book/chapter10/AttendanceBook' // 7장
+import SignUp from '../Book/chapter11/SignUp' // 7장
+/*
+import Clock from './chapter4/Clock'
+import CommentList from './chapter5/CommentList'
+import NotificationList from './chapter6/NotificationList' //6장
+import Counter from './chapter7/Ex1_Hook' // 7장
+*/
+
 //라우터 설치 [ 터미널 ] npm i react-router-dom
   //import { 컴포넌트명 } from 'react-router-dom';
 //  import { BrowserRouter , Routes , Route , Link} from 'react-router-dom';
@@ -42,7 +63,23 @@ export default function Index(props){
                                        <Route path="/member/signup" element={ <Signup/> }/>
                                        <Route path="/member/login"  element={ <Login/> }/>
                                        <Route path="/board/list"  element={ <BoardList/> }/>
-                                        <Route path="/board/write"  element={ <BoardWrite/> }/>
+                                       <Route path="/board/write"  element={ <BoardWrite/> }/>
+                                       <Route path="/board/view/:bno"  element={ <Boardview/> }/>
+                                        <Route path="/board/update/:bno"  element={ <BoardUpdate/> }/>
+
+                                       <Route path="/book/booklist"  element={ <BookList/> }/>
+                                       <Route path="/chapter3/library"  element={ <Library/> }/>
+                                       <Route path="/chapter4/clock"  element={ <Clock/> }/>
+                                       <Route path="/chapter5/commentList"  element={ <CommentList/> }/>
+                                       <Route path="/chapter6/notificationList" element={<NotificationList/>} />
+                                        <Route path="/chapter7/accommodate"  element={ <Accommodate/> }/>
+                                        <Route path="/chapter8/testState"  element={ <TestState/> }/>
+                                       <Route path="/chapter9/landingPage"  element={ <LandingPage/> }/>
+                                       <Route path="/chapter10/AttendanceBook"  element={ <AttendanceBook/> }/>
+                                        <Route path="/chapter11/SignUp"  element={ <SignUp/> }/>
+
+
+
                                 </Routes>
                          <Footer/>
                 </BrowserRouter>

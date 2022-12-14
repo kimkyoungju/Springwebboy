@@ -20,7 +20,7 @@ function Signup(props) {
             //axios.MethodType("통신URL" ,전송할 data )
 
            axios
-               .post("http://localhost:8080/member/setmember" , info )
+               .post("/member/setmember" , info )
                .then(res=>{
                 let result = res.data;
                 alert(result)

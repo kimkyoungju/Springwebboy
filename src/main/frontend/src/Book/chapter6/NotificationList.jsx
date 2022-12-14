@@ -34,7 +34,7 @@ class NotificationList extends React.Component{
             }else{
                 this.setState( {notifications :[] } ) //상태초기화
             }
-        },500); //1초마다  위코드 실행
+        },1000); //1초마다  위코드 실행
 
     }
     componentWillUnmount(){

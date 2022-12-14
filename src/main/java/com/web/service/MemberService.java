@@ -99,20 +99,19 @@ public class MemberService
 
    public MemberEntity getEntity() {
        //1. 로그인 정보확인 [ 세션 =loginMno]
-       Object object = request.getSession().getAttribute("loginMno");
+      // Object object = request.getSession().getAttribute("loginMno");
+       Object object = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
        if (object == null) {
            return null;
        }
        //2.로그인된 회원정보 호출
-       int mno = (Integer) object;
+      // int mno = (Integer) object;
+       MemberDto memberDto  = (MemberDto)object;
        //3. 회원번호 ---> 회원정보 호출
-       Optional<MemberEntity> optional = memberRepository.findById(mno);
-       if (!optional.isPresent()) {
-           return null;
-       }
-       MemberEntity memberEntity = optional.get();
-       return memberEntity;
-
+      // Optional<MemberEntity> optional = memberRepository.findById(mno);
+      Optional<MemberEntity> optional = memberRepository.findByMemail(memberDto.getMemail());
+       if (!optional.isPresent()) { return null; }
+       return optional.get();
    }
 
     @Transactional
@@ -265,7 +264,7 @@ public class MemberService
             return null;
         }else{ // anonymousUser 아니면 로그인후
             MemberDto memberDto = (MemberDto) principal;
-            return memberDto.getMemail()+"_"+memberDto.getAuthorities();
+            return memberDto.getMemail();
         }
     }
     //7. 로그아웃

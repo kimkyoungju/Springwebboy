@@ -1,9 +1,6 @@
 package com.web.controll;
 
-import com.web.domain.dto.BcategoryDto;
-import com.web.domain.dto.BoardDto;
-import com.web.domain.dto.NomemberDto;
-import com.web.domain.dto.NwriteDto;
+import com.web.domain.dto.*;
 import com.web.service.Boardservice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -62,9 +59,9 @@ public class BoardController {
         return boardService.setboard( boardDto);
     }
 
-    @GetMapping("/boardlist")
-    public List<BoardDto> boardlist(@RequestParam("bcno") int bcno ){
-        return boardService.boardlist(bcno);
+    @PostMapping("/boardlist")
+    public PageDto boardlist(@RequestBody PageDto pageDto) {
+        return boardService.boardlist(pageDto);
     }
     // 3. 게시물 개별 조회
     @GetMapping("/getboard")

@@ -1,9 +1,6 @@
 package com.web.service;
 
-import com.web.domain.dto.BcategoryDto;
-import com.web.domain.dto.BoardDto;
-import com.web.domain.dto.NomemberDto;
-import com.web.domain.dto.NwriteDto;
+import com.web.domain.dto.*;
 import com.web.domain.entity.bcategory.BcategoryEntity;
 import com.web.domain.entity.bcategory.BcategoryRepository;
 import com.web.domain.entity.board.BoardEntity;
@@ -15,6 +12,10 @@ import com.web.domain.entity.nomember.NomemberRepository;
 import com.web.domain.entity.nomember.NwriteEntity;
 import com.web.domain.entity.nomember.NwriteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,26 +32,29 @@ import java.util.UUID;
 @Service
 public class Boardservice {
     // ------------1.전역변수---------------//
+    // ------------1.전역변수---------------//
     @Autowired
-    private BoardRepository boardRepository; // 게시물 리포지토리 객체 선언
+    private HttpServletRequest request; // 요청 객체 선언
     @Autowired
-    private MemberRepository memberRepository; // 회원리포지토리 객체 선언
+    private HttpServletResponse response; // 응답 객체 선언
     @Autowired
-    private HttpServletRequest request; // 요청객체 선언
+    private MemberRepository memberRepository; // 회원 리포지토리 객체 선언
     @Autowired
-    private HttpServletResponse response; //응답객체 선언
+    private MemberService memberService;
     @Autowired
-    private BcategoryRepository bcategoryRepository; //
-
+    private BoardRepository boardRepository;// 게시물 리포지토리 객체 선언
+    @Autowired
+    private BcategoryRepository bcategoryRepository;
+    // @Autowired
+    // private  BoardService boardService; // 불가능
     @Autowired
     private NwriteRepository nwriteRepository; //
     @Autowired
     private NomemberRepository repository;
     @Autowired
     private MemberService service;
-    //첨부파일 경로
-    String path = "C:\\Users\\504\\Desktop\\springweb\\Springwebboy\\src\\main\\resources\\static\\buploard\\";
-
+    // 첨부파일 경로
+    String path = "C:\\upload\\";
 
 
     // @Transactional : 엔티티 DML 적용 할때 사용되는 어노테이션
@@ -109,7 +113,7 @@ public class Boardservice {
     @Transactional
     public  boolean fileupload(BoardDto boardDto,BoardEntity boardEntity){
 
-        if(boardDto.getBfile() != null) {
+        if(!boardDto.getBfile().getOriginalFilename().equals("")) {
             String uuid = UUID.randomUUID().toString();
             String filename = uuid + "_" + boardDto.getBfile().getOriginalFilename(); //업로드된 파일의 이름
             //1. pk+ 파일명 [uuid(범용 고유 식별자 클래스)]
@@ -142,7 +146,7 @@ public class Boardservice {
     @Transactional
     public boolean setboard(BoardDto boardDto) {
 
-        MemberEntity memberEntity = service.getEntity();
+        MemberEntity memberEntity = memberService.getEntity();
         if(memberEntity == null) {return false;}
         System.out.println(boardDto);
         System.out.println(memberEntity);
@@ -175,23 +179,32 @@ public class Boardservice {
     }
 
     // 2. 게시물 목록 조회
-    @Transactional
-    public List<BoardDto> boardlist(int bcno) {
-        List<BoardEntity> elist = null;
-        if(bcno == 0){ //0이면 전체보기
-           elist =  boardRepository.findAll(); // 1. 모든 엔티티 호출한다.
-        }else{ // 0이 아니면 선택된 카테고리별 보기
-           BcategoryEntity bcEntity =  bcategoryRepository.findById(bcno).get();
-            elist = bcEntity.getBoardEntityList();
-        }
+    @Transactional      // bcno : 카테고리번호 , page : 현재 페이지번호 , key : 검색필드명 , keyword : 검색 데이터
+    public PageDto  boardlist(PageDto pageDto){
+        Page<BoardEntity> elist = null; // 1. 페이징처리된 엔티티 리스트 객체 선언
+        Pageable pageable = PageRequest.of(  // 2.페이징 설정 [ 페이지시작 : 0 부터 ] , 게시물수 , 정렬
+               pageDto.getPage()-1 , 3 , Sort.by( Sort.Direction.DESC , "bno")  );
+        // 3. 검색여부 / 카테고리  판단
+
+            elist = boardRepository.findBySearch( pageDto.getBcno() ,pageDto.getKey(), pageDto.getKeyword() , pageable);
+
+
+        // 프론트엔드에 표시할 페이징번호버튼 수
+        int btncount = 5;                               // 1.페이지에 표시할 총 페이지 버튼 개수
+        int startbtn = (pageDto.getPage()/btncount) * btncount +1;   // 2. 시작번호 버튼
+        int endbtn = startbtn + btncount-1;             // 3. 마지막번호 버튼
+        if( endbtn > elist.getTotalPages() ) endbtn =elist.getTotalPages();
 
         List<BoardDto> dlist = new ArrayList<>(); // 2. 컨트롤에게 전달할때 형변환[ entity->dto ] : 역할이 달라서
-        for (BoardEntity entity : elist) { // 3. 변환
-            dlist.add(entity.toDto());
+        for( BoardEntity entity : elist ){ // 3. 변환
+            dlist.add( entity.toDto() );
         }
-        return dlist;  // 4. 변환된 리스트 dist 반환
+        pageDto.setList(dlist);
+        pageDto.setStartbtn(startbtn);
+        pageDto.setEndbtn(endbtn);
+        pageDto.setTotalBoards(elist.getTotalElements());
+        return pageDto;  // 4. 변환된 리스트 dist 반환
     }
-
     // 3. 게시물 개별 조회
     @Transactional
     public BoardDto getboard(int bno) {
@@ -238,7 +251,7 @@ public class Boardservice {
 
 
             //1. 수정할 첨부파일이 있을때--> 기존첨부파일 삭제후 새로운파일 업로드->
-            if(boardDto.getBfile() != null){
+            if(!boardDto.getBfile().getOriginalFilename().equals("")){
                 if(entity.getBfile() != null) {
                     File file = new File(path + entity.getBfile());
                     if (file.exists()) {
@@ -347,11 +360,6 @@ public class Boardservice {
             entityList.forEach(e -> dtolist.add(e.noDto()));
             return  dtolist;
         }
-
-
-
-
-
 }
 //for (int i = 0; i < entityList.size(); i++) {
 //            BcategoryEntity e = entityList.get(i);
