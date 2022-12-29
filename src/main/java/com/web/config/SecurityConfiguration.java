@@ -22,13 +22,30 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override // http 관련 시리큐티 재정의
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .formLogin()                // 로그인 페이지 보안 설정
-                        .loginPage("/member/login") // 아이디와 비밀번호를 입력받을 URL [ 로그인 페이지  ]
-                        .loginProcessingUrl("/member/getmember") // 로그인을 처리할 URL [ 서비스 --> loadUserByUsername  ]
-                        .defaultSuccessUrl("/") // 로그인 성공했을때 이동할 URL
-                        .failureUrl("/member/login") // 로그인 실패시 이동할 URL
-                        .usernameParameter("memail")    // 아이디 변수명
-                        .passwordParameter("mpassword") // 비밀번호 변수명
+                //권한레 따른 http 접근 ㄷ제한 두기
+                .authorizeHttpRequests() //1.인증 http 요청들[ 인증-로그인된] http조건들
+                    .antMatchers("/board/write")
+                         .hasRole("MEMBER")
+                 .antMatchers("/room/write")
+                    .hasRole("MEMBER")
+
+                .antMatchers("/board/update/**")
+                         .hasRole("MEMBER")
+                    .antMatchers("/admin/**")
+                        .hasRole("ADMIN")
+                    .antMatchers("/**")
+                        .permitAll() // 그외 모든 권한들이 접근간응
+                .and()
+                    .exceptionHandling() //오류페이지에 대한 페이지 매핑
+                    .accessDeniedPage("/error") // 해당 url 이동
+                .and()
+                    .formLogin()                // 로그인 페이지 보안 설정
+                            .loginPage("/member/login") // 아이디와 비밀번호를 입력받을 URL [ 로그인 페이지  ]
+                            .loginProcessingUrl("/member/getmember") // 로그인을 처리할 URL [ 서비스 --> loadUserByUsername  ]
+                            .defaultSuccessUrl("/") // 로그인 성공했을때 이동할 URL
+                            .failureUrl("/member/login") // 로그인 실패시 이동할 URL
+                            .usernameParameter("memail")    // 아이디 변수명
+                            .passwordParameter("mpassword") // 비밀번호 변수명
 
                 .and()
                     .logout()               // 로그아웃 보안 설정
@@ -44,9 +61,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                         .ignoringAntMatchers("/board/boardlist") // 게시물 출력 post 사용
                         .ignoringAntMatchers("/board/delboard") // 게시물 출력 post 사용
                         .ignoringAntMatchers("/board/upboard") // 게시물 출력 post 사용
+                        .ignoringAntMatchers("/room/setroom") // 게시물 출력 post 사용
 
                 .and()// 기능 구분
                         .oauth2Login()
+                .defaultSuccessUrl("/")
                         .userInfoEndpoint()
                         .userService(memberService);
 
@@ -77,4 +96,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 // WebSecurityConfigurerAdapter : 웹시큐리티 설정 클래스
                      // 설정 종류
                         // 1. URL 권한
+          //권한레 따른 http 제한 두기
+
+
+               http
+                .authorizeRequest("URL") //인증요청url들
+                    .antMatchers("URL").permitAll() :        //  1. 해당 url 에모든 role 접근 가능
+                    .antMatchers("URL").hasRole("권한이름")    // 2. 해당 URL에 해당 권한명을 가진 인증만 겁근 가능
+                    .antMatchers("URL").permitAll() :        //인증 상관업이 무조건허용
+                    .antMatchers("URL").denyAll() :          //인증 상관없이 무조건 차단
+                    .antMatchers("URL").hasIpAddress("ip주소") : //해당 ip만 접근 가ㅡㅇ
  */

@@ -40,8 +40,10 @@ export default function Header() {
                             </>
                       )
                     }
-                    <li> <Link to="/book/booklist">리액트빨간펜</Link></li>
-                    <li> <Link to="/board/list" >자유게시판</Link></li>
+                    <li> <a href="/book/booklist">리액트빨간펜</a></li>
+                    <li> <a href="/board/list" >자유게시판</a></li>
+                     <li> <a href="/room/write" >방등록</a></li>
+                    <li> <Link to="/chatting" >익명채팅방</Link></li>
 
                 </ul>
          </div>
